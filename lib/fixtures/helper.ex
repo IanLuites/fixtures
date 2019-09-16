@@ -152,6 +152,10 @@ defmodule Fixtures.Helper do
 
   defp generate_persist({mod, fun}) do
     quote do
+      @doc """
+      See: `#{unquote(mod)}.#{unquote(fun)}`.
+      """
+      @spec persist(Keyword.t()) :: {:ok, struct}
       def persist(opts \\ []) do
         with {:ok, d} <- create(opts), do: unquote(mod).unquote(fun)(d, opts)
       end
@@ -160,6 +164,10 @@ defmodule Fixtures.Helper do
 
   defp generate_persist(persist) when is_atom(persist) do
     quote do
+      @doc """
+      See: `#{unquote(persist)}`.
+      """
+      @spec persist(Keyword.t()) :: {:ok, struct}
       def persist(opts \\ []) do
         with {:ok, d} <- create(opts), do: unquote(persist).persist(d, opts)
       end
