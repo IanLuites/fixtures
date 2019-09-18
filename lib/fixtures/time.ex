@@ -59,7 +59,7 @@ defmodule Fixtures.Time do
     format = opts[:format] || NaiveDateTime
     precision = opts[:precision] || :second
 
-    base = format.from_iso8601!("1970-01-01T00:00:00.000000Z")
+    base = "1970-01-01T00:00:00.000000Z" |> format.from_iso8601() |> elem(1)
     format.add(base, Enum.random(0..:os.system_time(precision)), precision)
   end
 end
