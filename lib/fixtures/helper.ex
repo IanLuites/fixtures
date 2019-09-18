@@ -89,6 +89,7 @@ defmodule Fixtures.Helper do
 
     block_content =
       case block[:do] do
+        a = {:def, _, _} -> [a]
         {_, _, a} -> a
         a -> [a]
       end

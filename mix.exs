@@ -5,7 +5,7 @@ defmodule Fixtures.MixProject do
     [
       app: :fixtures,
       description: "Elixir fixtures for randomly generating data.",
-      version: "0.0.2",
+      version: "0.0.3",
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
