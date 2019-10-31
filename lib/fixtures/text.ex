@@ -4,7 +4,7 @@ defmodule Fixtures.Text do
   """
   use Fixtures.Helper
 
-  @charset "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" |> String.split("")
+  @charset "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" |> String.graphemes()
 
   @doc ~S"""
   Generate a random string.
@@ -25,7 +25,7 @@ defmodule Fixtures.Text do
     cs =
       case opts[:charset] do
         nil -> @charset
-        custom -> String.split(custom, "")
+        custom -> String.graphemes(custom)
       end
 
     gen_string(Enum.random(range), cs)
