@@ -155,6 +155,12 @@ defmodule Fixtures.Helper do
     quote do
       @doc """
       See: `#{unquote(mod)}.#{unquote(fun)}`.
+
+      ## Examples
+
+      ```elixir
+      iex> persist(field: :value)
+      ```
       """
       @spec persist(Keyword.t()) :: {:ok, struct}
       def persist(opts \\ []) do
@@ -167,6 +173,12 @@ defmodule Fixtures.Helper do
     quote do
       @doc """
       See: `#{unquote(persist)}`.
+
+      ## Examples
+
+      ```elixir
+      iex> persist(field: :value)
+      ```
       """
       @spec persist(Keyword.t()) :: {:ok, struct}
       def persist(opts \\ []) do
