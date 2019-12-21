@@ -54,12 +54,29 @@ defmodule Fixtures.Time do
   @doc ~S"""
   Generate a random timestamp.
   """
-  @spec timestamp(Keyword.t()) :: DateTime.t() | NaiveDateTime.t()
+  @spec timestamp(Keyword.t()) :: UTCDateTime.t() | DateTime.t() | NaiveDateTime.t()
   def timestamp(opts \\ []) do
-    format = opts[:format] || NaiveDateTime
+    format = opts[:format] || UTCDateTime
     precision = opts[:precision] || :second
 
-    base = "1970-01-01T00:00:00.000000Z" |> format.from_iso8601() |> elem(1)
-    format.add(base, Enum.random(0..:os.system_time(precision)), precision)
+    min =
+      Keyword.get_lazy(opts, :after, fn ->
+        "1970-01-01T00:00:00.000000Z"
+        |> format.from_iso8601()
+        |> elem(1)
+      end)
+
+    addition =
+      cond do
+        before = opts[:before] -> format.diff(before, min, precision)
+        duration = opts[:duration] -> duration
+        :now -> format.diff(format.utc_now, min, precision)
+      end
+
+    min_addition = opts[:min_duration] || 0
+
+    min
+    |> format.add(Enum.random(min_addition..addition), precision)
+    |> format.truncate(precision)
   end
 end
