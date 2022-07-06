@@ -5,7 +5,7 @@ defmodule Fixtures.MixProject do
     [
       app: :fixtures,
       description: "Elixir fixtures for randomly generating data.",
-      version: "0.0.7",
+      version: "0.0.10",
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -63,8 +63,7 @@ defmodule Fixtures.MixProject do
       {:utc_datetime, ">= 0.0.0"},
 
       # Tests
-      {:analyze, "~> 0.1.10", runtime: false, optional: true, only: [:dev, :test]},
-      {:dialyxir, "~> 1.0.0-rc.7", optional: true, runtime: false, only: :dev}
+      {:heimdallr, ">= 0.0.0", only: [:dev, :test]}
     ]
   end
 end

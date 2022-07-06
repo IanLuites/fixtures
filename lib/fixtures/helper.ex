@@ -162,7 +162,7 @@ defmodule Fixtures.Helper do
       iex> persist(field: :value)
       ```
       """
-      @spec persist(Keyword.t()) :: {:ok, struct}
+      @spec persist(Keyword.t()) :: {:ok, term}
       def persist(opts \\ []) do
         with {:ok, d} <- create(opts), do: unquote(mod).unquote(fun)(d, opts)
       end
@@ -180,7 +180,7 @@ defmodule Fixtures.Helper do
       iex> persist(field: :value)
       ```
       """
-      @spec persist(Keyword.t()) :: {:ok, struct}
+      @spec persist(Keyword.t()) :: {:ok, term}
       def persist(opts \\ []) do
         with {:ok, d} <- create(opts), do: unquote(persist).persist(d, opts)
       end

@@ -7,18 +7,18 @@ defmodule Fixtures do
   @doc ~S"""
   Create a fixture.
   """
-  @callback create(Keyword.t()) :: {:ok, term} | {:error, atom}
+  @callback create(term) :: {:ok, term} | {:error, atom}
 
   @doc ~S"""
   Create and then persist a fixture.
   """
-  @callback persist(Keyword.t()) :: {:ok, term} | {:error, atom}
+  @callback persist(term) :: {:ok, term} | {:error, atom}
 
   @doc @moduledoc
   defmacro __using__(_opts \\ []) do
     quote do
       require Fixtures
-      import Fixtures, only: [fixture: 2, fixture: 3]
+      import Fixtures, only: [fixture: 1, fixture: 2, fixture: 3]
       import Fixtures.Colors
       import Fixtures.Geography
       import Fixtures.Names
@@ -32,6 +32,17 @@ defmodule Fixtures do
   @doc ~S"""
   Create a fixture.
   """
+  defmacro fixture(block = [{:do, _}]),
+    do: generate_fixture(__CALLER__, __CALLER__.module, [], block)
+
+  @doc ~S"""
+  Create a fixture.
+  """
+  defmacro fixture(model_or_opts, block)
+
+  defmacro fixture(opts, block = [{:do, _}]) when is_list(opts),
+    do: generate_fixture(__CALLER__, __CALLER__.module, opts, block)
+
   defmacro fixture(model, block = [{:do, _}]), do: generate_fixture(__CALLER__, model, [], block)
 
   @doc ~S"""
@@ -41,25 +52,21 @@ defmodule Fixtures do
 
   @doc ~S"""
   """
-  @spec create(module, Keyword.t()) :: {:ok, struct()} | {:error, term}
+  @spec create(module, term) :: {:ok, term} | {:error, term}
   def create(module, opts \\ []) do
-    with {:ok, f} <- fixture(module) do
-      f.create(opts)
-    end
+    with {:ok, f} <- impl(module), do: f.create(opts)
   end
 
   @doc ~S"""
   """
-  @spec persist(module, Keyword.t()) :: {:ok, struct()} | {:error, term}
+  @spec persist(module, term) :: {:ok, term} | {:error, term}
   def persist(module, opts \\ []) do
-    with {:ok, f} <- fixture(module) do
-      f.persist(opts)
-    end
+    with {:ok, f} <- impl(module), do: f.persist(opts)
   end
 
   @doc ~S"""
   """
-  @spec create!(module, Keyword.t()) :: struct() | no_return
+  @spec create!(module, term) :: term | no_return
   def create!(module, opts \\ []) do
     case create(module, opts) do
       {:ok, m} -> m
@@ -69,7 +76,7 @@ defmodule Fixtures do
 
   @doc ~S"""
   """
-  @spec persist!(module, Keyword.t()) :: struct() | no_return
+  @spec persist!(module, term) :: term | no_return
   def persist!(module, opts \\ []) do
     case persist(module, opts) do
       {:ok, m} -> m
@@ -79,8 +86,8 @@ defmodule Fixtures do
 
   ### Helpers ###
 
-  @spec fixture(module) :: {:ok, module} | {:error, :unknown_fixture}
-  defp fixture(module) do
+  @spec impl(module) :: {:ok, module} | {:error, :unknown_fixture}
+  defp impl(module) do
     {:ok, Module.safe_concat([Fixtures.Impl, module])}
   rescue
     ArgumentError -> {:error, :unknown_fixture}
