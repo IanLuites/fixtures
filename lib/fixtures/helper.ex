@@ -121,7 +121,7 @@ defmodule Fixtures.Helper do
     user_create =
       if has_create?(block_content),
         do: block,
-        else: [do: {:__block__, [], Enum.slice(block_content, 0..-2)}]
+        else: [do: {:__block__, [], Enum.slice(block_content, 0..-2//1)}]
 
     quote do
       defmodule unquote(Module.concat([Fixtures.Impl, model])) do

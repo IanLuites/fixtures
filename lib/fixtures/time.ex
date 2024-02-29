@@ -23,11 +23,11 @@ defmodule Fixtures.Time do
         range?(opts[:age]) ->
           t = Date.utc_today()
           f..a = opts[:age]
-          {Date.add(%{t | year: t.year - (f + 1)}, 1), %{t | year: t.year - a}}
+          {Date.add(safe_years_sub(t, f + 1), 1), safe_years_sub(t, a)}
 
         age = opts[:age] ->
           t = Date.utc_today()
-          {Date.add(%{t | year: t.year - (age + 1)}, 1), %{t | year: t.year - age}}
+          {Date.add(safe_years_sub(t, age + 1), 1), safe_years_sub(t, age)}
 
         opts[:from] && opts[:to] ->
           {opts[:from], opts[:to]}
@@ -36,15 +36,22 @@ defmodule Fixtures.Time do
           {f, Date.utc_today()}
 
         t = opts[:to] ->
-          {%{t | year: t.year - 1}, t}
+          {safe_years_sub(t, 1), t}
 
         :last_hundred_year ->
           t = Date.utc_today()
-          {%{t | year: t.year - 100}, t}
+          {safe_years_sub(t, 100), t}
       end
 
     diff = Date.diff(to, from)
     Date.add(from, Enum.random(0..diff))
+  end
+
+  defp safe_years_sub(date, years) do
+    new = %{date | year: date.year - years}
+    days = Date.days_in_month(new)
+
+    if days < new.day, do: %{new | day: days}, else: new
   end
 
   @spec range?(any) :: boolean
